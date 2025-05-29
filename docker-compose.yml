@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   pdf-tag-extraction:
     build: .
@@ -8,22 +10,27 @@ services:
     env_file:
       - .env
     volumes:
-      # Optional: Mount volume for persistent temporary files if needed
+      # Mount volume for persistent logs and temporary files
       - ./tmp:/tmp/uploads
+      - ./logs:/tmp/logs
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "health_check.py"]
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 40s
+      start_period: 60s
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '1.0'
+          memory: 4G  # Increased memory limit
+          cpus: '2.0'
         reservations:
-          memory: 512M
+          memory: 1G
           cpus: '0.5'
-    # Add command to handle larger requests
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-keep-alive", "300", "--limit-max-requests", "1000"]
+    # Prevent container from restarting too quickly if it crashes
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

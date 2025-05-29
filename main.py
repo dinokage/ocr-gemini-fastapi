@@ -1,5 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Form
-from fastapi.responses import JSONResponse
+# from fastapi.responses import JSONResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Form
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 import google.generativeai as genai
@@ -23,6 +26,20 @@ app = FastAPI(
     title="PDF Tag Extraction Service", 
     version="2.0.0",
     description="Extract component and pipeline tags from engineering diagrams using Gemini AI"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure this properly for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(
+    TrustedHostMiddleware, 
+    allowed_hosts=["*"]  # Configure this properly for production
 )
 
 # Configuration with detailed debugging

@@ -24,20 +24,24 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
 ### Option 1: Quick Setup (Recommended)
 
 1. **Clone and navigate to the project:**
+
    ```bash
    git clone https://github.com/dinokage/ocr-gemini-fastapi
    cd ocr-gemini-fastapi
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Run the setup script:**
+
    ```bash
    python setup_env.py
    ```
+
    This interactive script will:
    - Guide you through API key setup
    - Create the `.env` file
@@ -45,6 +49,7 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
    - Verify Gemini API connection
 
 4. **Start the server:**
+
    ```bash
    python main.py
    # or
@@ -54,16 +59,19 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
 ### Option 2: Manual Setup
 
 1. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 2. **Create `.env` file:**
+
    ```bash
    echo "GEMINI_API_KEY=your_actual_api_key_here" > .env
    ```
 
 3. **Start the server:**
+
    ```bash
    python main.py
    ```
@@ -71,6 +79,7 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
 ### Option 3: Docker Setup
 
 1. **Using Docker Compose (Recommended):**
+
    ```bash
    # Create .env file first
    echo "GEMINI_API_KEY=your_actual_api_key_here" > .env
@@ -80,6 +89,7 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
    ```
 
 2. **Using Docker directly:**
+
    ```bash
    docker build -t pdf-extractor .
    docker run -p 8000:8000 -e GEMINI_API_KEY=your_key pdf-extractor
@@ -90,6 +100,7 @@ A FastAPI-based service that extracts component and pipeline tags from engineeri
 If you encounter API key issues:
 
 1. **Run the debug script:**
+
    ```bash
    python debug_env.py
    ```
@@ -103,11 +114,13 @@ If you encounter API key issues:
 ## 🌐 API Usage
 
 ### Service Health Check
+
 ```bash
 curl http://localhost:8000/health
 ```
 
 ### Process Multiple PDFs (Async)
+
 ```bash
 curl -X POST "http://localhost:8000/extract-tags" \
   -F "files=@diagram1.pdf" \
@@ -117,6 +130,7 @@ curl -X POST "http://localhost:8000/extract-tags" \
 ```
 
 ### Quick Single PDF Test (Sync)
+
 ```bash
 curl -X POST "http://localhost:8000/test-single-pdf" \
   -F "file=@diagram.pdf" \
@@ -124,6 +138,7 @@ curl -X POST "http://localhost:8000/test-single-pdf" \
 ```
 
 ### Validate PDF Before Processing
+
 ```bash
 curl -X POST "http://localhost:8000/validate-pdf" \
   -F "file=@diagram.pdf"
@@ -180,11 +195,13 @@ See the [detailed Postman guide](postman_guide.md) for step-by-step instructions
 ## 📋 Request Parameters
 
 ### Extract Tags Parameters
+
 - `files`: PDF files to process (multipart/form-data)
 - `gemini_model`: Gemini model to use (default: "gemini-1.5-flash-latest")
 - `pdf_conversion_dpi`: DPI for PDF conversion (72-600, default: 300)
 
 ### File Constraints
+
 - **File Types**: PDF only (`.pdf` extension required)
 - **File Size**: Maximum 50MB per file
 - **Processing**: Multiple files supported in single request
@@ -192,10 +209,11 @@ See the [detailed Postman guide](postman_guide.md) for step-by-step instructions
 ## 🏷️ Supported Tag Types
 
 ### Component Tags
+
 The service recognizes and categorizes various component types:
 
 - **Pumps**: `P-101A`, `P-200B`
-- **Valves**: 
+- **Valves**:
   - Ball Valves: `BV-001`, `BV-002`
   - Gate Valves: `GV-003`, `GV-004`
   - Control Valves: `CV-005`, `XV-006`
@@ -208,10 +226,12 @@ The service recognizes and categorizes various component types:
 - **Equipment**: `TK-001` (tanks), `E-001` (exchangers), `C-001` (compressors)
 
 ### Pipeline Tags
+
 Complex pipeline identifiers with structure:
 `{line_number}-{service}-{sequence}-{specifications}`
 
 **Examples:**
+
 - `13-M2-0041-1.5"-OD-91440X`
 - `01-P10A-0002-DN50-CS-L150`
 - `100-HC-001-4"-SS316-INS01`
@@ -247,6 +267,7 @@ Complex pipeline identifiers with structure:
 ## ⚙️ Configuration Options
 
 ### Environment Variables
+
 ```bash
 GEMINI_API_KEY=your_gemini_api_key          # Required
 LOG_LEVEL=INFO                              # Optional
@@ -255,6 +276,7 @@ MAX_CONCURRENT_TASKS=5                      # Optional
 ```
 
 ### Processing Settings
+
 - **DPI Range**: 72-600 (higher = better quality, slower processing)
 - **Recommended DPI**: 300 for balance of quality and speed
 - **Model Options**: `gemini-1.5-flash-latest`, `gemini-1.5-flash-8b`
@@ -262,12 +284,14 @@ MAX_CONCURRENT_TASKS=5                      # Optional
 ## 🚀 Performance Optimization
 
 ### Processing Speed Tips
+
 1. **Use appropriate DPI**: 150-200 for draft, 300 for production, 400+ for high quality
 2. **File size matters**: Smaller files process faster
 3. **Page count**: More pages = longer processing time
 4. **Batch wisely**: Process multiple smaller files rather than one large file
 
 ### Expected Processing Times
+
 - **1-5 pages**: 30-60 seconds
 - **6-15 pages**: 1-3 minutes  
 - **16+ pages**: 3+ minutes
@@ -277,6 +301,7 @@ MAX_CONCURRENT_TASKS=5                      # Optional
 ## 🏭 Production Deployment
 
 ### Docker Production Setup
+
 ```yaml
 # docker-compose.prod.yml
 version: '3.8'
@@ -307,6 +332,7 @@ services:
 ```
 
 ### Production Recommendations
+
 1. **Use Redis**: Replace in-memory task storage with Redis
 2. **Add Authentication**: Implement API key authentication
 3. **Load Balancer**: Use nginx for load balancing
@@ -318,6 +344,7 @@ services:
 ## 🔍 Monitoring & Debugging
 
 ### Health Monitoring
+
 ```bash
 # Check service health
 curl http://localhost:8000/health
@@ -327,6 +354,7 @@ curl http://localhost:8000/tasks
 ```
 
 ### Debugging Tools
+
 ```bash
 # Debug environment setup
 python debug_env.py
@@ -369,17 +397,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support & Help
 
 ### Getting Help
+
 - **Setup Issues**: Run `python debug_env.py` for detailed diagnostics
 - **API Questions**: Check the interactive docs at `http://localhost:8000/docs`
 - **Performance Issues**: See the Performance Optimization section above
 
 ### Resources
+
 - [Gemini API Documentation](https://ai.google.dev/docs)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Postman Testing Guide](postman_guide.md)
 
 ### Reporting Issues
+
 When reporting issues, please include:
+
 1. Python version and OS
 2. Output of `python debug_env.py`
 3. Server startup logs
@@ -398,4 +430,4 @@ When reporting issues, please include:
 - [ ] Upload a test PDF using Postman or Python client
 - [ ] Review the extracted tags and categories
 
-**Ready to extract tags from your engineering diagrams! 🎉**
+## Ready to extract tags from your engineering diagrams! 🎉

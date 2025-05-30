@@ -32,7 +32,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy health check script
-COPY health-check.py .
+COPY . .
 RUN chmod +x health-check.py
 
 # Create directory for temporary files

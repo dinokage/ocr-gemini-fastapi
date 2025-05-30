@@ -33,7 +33,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy health check script
 COPY . .
-RUN chmod +x health-check.py
 
 # Create directory for temporary files
 RUN mkdir -p /tmp/uploads
@@ -46,8 +45,7 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # Health check using custom script
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD python health-check.py || exit 1
+
 
 # Run the application with production settings
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-keep-alive", "300", "--limit-max-requests", "1000", "--workers", "1"]

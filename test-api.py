@@ -129,7 +129,7 @@ def test_extract_tags_async():
             
             # Poll for status
             max_attempts = 30  # 5 minutes max
-            for attempt in range(max_attempts):
+            for _ in range(max_attempts):
                 status_response = requests.get(f"{BASE_URL}/status/{task_id}", timeout=10)
                 if status_response.status_code == 200:
                     status = status_response.json()

@@ -1,12 +1,12 @@
 import sys
-import traceback
+# import traceback
 import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Form, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, Dict, Optional
 import google.generativeai as genai
 import os
@@ -15,9 +15,9 @@ from PIL import Image
 import io
 import json
 from collections import defaultdict, Counter
-import re
+# import re
 import tempfile
-import asyncio
+# import asyncio
 from datetime import datetime
 import uuid
 from dotenv import load_dotenv
@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="PDF Tag Extraction Service", 
-    version="2.0.0",
+    version="2.0.1",
     description="Extract component and pipeline tags from engineering diagrams using Gemini AI",
     lifespan=lifespan
 )

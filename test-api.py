@@ -4,7 +4,7 @@ import requests
 import time
 import os
 
-BASE_URL = "http://172.31.3.236:8000"
+BASE_URL = "http://localhost:8000"
 
 def test_health():
     """Test health endpoint"""
@@ -26,88 +26,17 @@ def test_root():
         print(f"Root endpoint failed: {e}")
         return False
 
-def create_dummy_pdf():
-    """Create a minimal dummy PDF for testing"""
-    try:
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import letter
-        
-        filename = "test_dummy.pdf"
-        c = canvas.Canvas(filename, pagesize=letter)
-        c.drawString(100, 750, "Test PDF for API Testing")
-        c.drawString(100, 700, "P-101A")  # Sample tag
-        c.drawString(100, 650, "BV-0007")  # Sample tag
-        c.save()
-        
-        return filename
-    except ImportError:
-        print("reportlab not installed, creating minimal PDF file")
-        # Create a minimal PDF manually
-        filename = "test_minimal.pdf"
-        with open(filename, 'wb') as f:
-            # Minimal PDF content
-            pdf_content = b"""%PDF-1.4
-1 0 obj
-<<
-/Type /Catalog
-/Pages 2 0 R
->>
-endobj
-
-2 0 obj
-<<
-/Type /Pages
-/Kids [3 0 R]
-/Count 1
->>
-endobj
-
-3 0 obj
-<<
-/Type /Page
-/Parent 2 0 R
-/MediaBox [0 0 612 792]
-/Contents 4 0 R
->>
-endobj
-
-4 0 obj
-<<
-/Length 44
->>
-stream
-BT
-/F1 12 Tf
-72 720 Td
-(Test PDF) Tj
-ET
-endstream
-endobj
-
-xref
-0 5
-0000000000 65535 f 
-0000000010 00000 n 
-0000000053 00000 n 
-0000000125 00000 n 
-0000000185 00000 n 
-trailer
-<<
-/Size 5
-/Root 1 0 R
->>
-startxref
-279
-%%EOF"""
-            f.write(pdf_content)
-        
-        return filename
-
 def test_pdf_validation():
     """Test PDF validation endpoint"""
     try:
-        pdf_file = create_dummy_pdf()
+        # Get the absolute path to the PDF file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        pdf_file = os.path.join(current_dir, '4460-FAHS-6-50-0001-002-C.pdf')
         
+        if not os.path.exists(pdf_file):
+            print(f"Error: PDF file not found at {pdf_file}")
+            return False
+            
         with open(pdf_file, 'rb') as f:
             files = {'file': (pdf_file, f, 'application/pdf')}
             response = requests.post(
@@ -122,10 +51,6 @@ def test_pdf_validation():
         else:
             print(f"Error: {response.text}")
         
-        # Clean up
-        if os.path.exists(pdf_file):
-            os.remove(pdf_file)
-            
         return response.status_code == 200
         
     except Exception as e:
@@ -135,8 +60,14 @@ def test_pdf_validation():
 def test_extract_tags_sync():
     """Test synchronous tag extraction"""
     try:
-        pdf_file = create_dummy_pdf()
+        # Get the absolute path to the PDF file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        pdf_file = os.path.join(current_dir, '4460-FAHS-6-50-0001-002-C.pdf')
         
+        if not os.path.exists(pdf_file):
+            print(f"Error: PDF file not found at {pdf_file}")
+            return False
+
         with open(pdf_file, 'rb') as f:
             files = {'file': (pdf_file, f, 'application/pdf')}
             data = {
@@ -158,10 +89,6 @@ def test_extract_tags_sync():
         else:
             print(f"Error: {response.text}")
         
-        # Clean up
-        if os.path.exists(pdf_file):
-            os.remove(pdf_file)
-            
         return response.status_code == 200
         
     except Exception as e:
@@ -171,8 +98,14 @@ def test_extract_tags_sync():
 def test_extract_tags_async():
     """Test asynchronous tag extraction"""
     try:
-        pdf_file = create_dummy_pdf()
+        # Get the absolute path to the PDF file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        pdf_file = os.path.join(current_dir, '4460-FAHS-6-50-0001-002-C.pdf')
         
+        if not os.path.exists(pdf_file):
+            print(f"Error: PDF file not found at {pdf_file}")
+            return False
+
         # Start async processing
         with open(pdf_file, 'rb') as f:
             files = {'files': (pdf_file, f, 'application/pdf')}
@@ -227,10 +160,6 @@ def test_extract_tags_async():
     except Exception as e:
         print(f"Async tag extraction test failed: {e}")
         return False
-    finally:
-        # Clean up
-        if 'pdf_file' in locals() and os.path.exists(pdf_file):
-            os.remove(pdf_file)
 
 def main():
     """Run all tests"""

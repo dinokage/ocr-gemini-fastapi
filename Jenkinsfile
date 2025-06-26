@@ -48,14 +48,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "🏗️ Building Docker image..."
-                sh 'docker-compose build --no-cache'
+                sh 'docker compose build --no-cache'
             }
         }
         
         stage('Start Service') {
             steps {
                 echo "🚀 Starting service with Docker Compose..."
-                sh 'docker-compose up -d'
+                sh 'docker compose up -d'
                 
                 // Wait for service to become available
                 sh '''
@@ -115,11 +115,11 @@ pipeline {
             // Capture logs
             sh '''
             mkdir -p logs
-            docker-compose logs > logs/docker-compose.log
+            docker compose logs > logs/docker-compose.log
             '''
             
             // Stop and remove containers
-            sh 'docker-compose down || true'
+            sh 'docker compose down || true'
             
             // Clean up environment file
             sh 'rm -f .env || true'

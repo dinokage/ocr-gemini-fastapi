@@ -41,9 +41,7 @@ pipeline {
                 echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
                 echo "Environment file created with API key"
                 '''
-                
-                // Run the debug environment script to verify configuration
-                sh 'python3 debug-env.py'
+
             }
         }
         
@@ -86,9 +84,7 @@ pipeline {
                 
                 // Copy test files to the workspace if needed
                 // sh 'cp /path/to/test/files/*.pdf .'
-                
-                // Run the test script
-                sh 'python3 test-api.py || true'  // Don't fail build if tests fail, just report
+            
             }
         }
         
